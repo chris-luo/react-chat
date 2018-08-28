@@ -7,12 +7,6 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-const styles = {
-    card: {
-        width: '50%'
-    }
-}
-
 class Auth extends Component {
     state = {
         email: '',
@@ -31,22 +25,24 @@ class Auth extends Component {
     };
 
     render() {
-        console.log(this.props);
         const { classes } = this.props;
-        console.log(classes);
         return (
             <Card className={classes.card}>
                 <CardContent>
                     <form onSubmit={this.submitHandler}>
                         <TextField
-                            placeholder="email"
+                            label="email"
                             value={this.state.email}
-                            onChange={this.handleChange('email')} />
+                            onChange={this.handleChange('email')}
+                            fullWidth
+                            margin="normal" />
                         <TextField
                             type="password"
-                            placeholder="password"
+                            label="password"
                             value={this.state.password}
-                            onChange={this.handleChange('password')} />
+                            onChange={this.handleChange('password')}
+                            fullWidth
+                            margin="normal" />
                         <Button type="submit" color="primary">
                             Sign in
                         </Button>
@@ -56,5 +52,14 @@ class Auth extends Component {
         )
     }
 }
+
+const styles = theme => ({
+    card: {
+        width: '100%',
+        [theme.breakpoints.up('sm')]: {
+            width: '50%',
+        },
+    }
+});
 
 export default withStyles(styles)(Auth);
