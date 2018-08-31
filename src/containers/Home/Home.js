@@ -10,7 +10,8 @@ import classes from './Home.css';
 
 class Home extends Component {
     state = {
-        chats: null
+        chats: null,
+        chat: null
     }
 
     componentDidMount() {
@@ -32,11 +33,29 @@ class Home extends Component {
     }
 
     onChat = chat => () => {
+        const token = localStorage.getItem('token');
+
         console.log(chat);
+        axios.get(`http://localhost:3000/users/1/chats/${chat.id}/messages`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            },
+            params: {
+                message_id: chat.messages[0].id
+            }
+        })
+            .then(res => {
+                console.log(res.data);
+                this.setState({
+                    chat: res.data
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     render() {
-        console.log(this.state.chats);
         let chats = null;
         if (this.state.chats) {
             chats = (
@@ -57,10 +76,26 @@ class Home extends Component {
                 </List>
             );
         }
+
+        let chat = null;
+        if (this.state.chat) {
+            chat = (
+                <List>
+                    {
+                        this.state.chat.map(message => (
+                            <ListItem key={message.id}>
+                                <ListItemText primary={message.body} />
+                            </ListItem>
+                        ))
+                    }
+                </List>
+            );
+        }
         return (
             <div>
                 <h1>Welcome Home</h1>
                 {chats}
+                {chat}
             </div>
 
         );

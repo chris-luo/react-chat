@@ -29,6 +29,7 @@ class Auth extends Component {
         axios.post('http://localhost:3000/users/signin', authData)
             .then(res => {
                 console.log(res);
+                localStorage.setItem('token', res.data.token);
             })
             .catch(error => {
                 console.log(error.response);
