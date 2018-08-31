@@ -1,4 +1,6 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -29,6 +31,9 @@ const styles = theme => ({
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'center',
+    },
+    Link: {
+        textDecoration: 'none'
     }
 });
 
@@ -47,18 +52,23 @@ const drawer = (props) => {
                 </div>
                 <Divider />
                 <List>
-                    <ListItem button onClick={props.toggleDrawer(false)}>
-                        <ListItemIcon>
-                            <Fingerprint />
-                        </ListItemIcon>
-                        <ListItemText primary="Sign In" />
-                    </ListItem>
-                    <ListItem button onClick={props.toggleDrawer(false)}>
-                        <ListItemIcon>
-                            <PersonAdd />
-                        </ListItemIcon>
-                        <ListItemText primary="Sign Up" />
-                    </ListItem>
+                    <NavLink to="/auth" className={classes.Link}>
+                        <ListItem button onClick={props.toggleDrawer(false)}>
+                            <ListItemIcon>
+                                <Fingerprint />
+                            </ListItemIcon>
+                            <ListItemText primary="Sign In" />
+                        </ListItem>
+                    </NavLink>
+
+                    <NavLink to="/auth" className={classes.Link}>
+                        <ListItem button onClick={props.toggleDrawer(false)}>
+                            <ListItemIcon>
+                                <PersonAdd />
+                            </ListItemIcon>
+                            <ListItemText primary="Sign Up" />
+                        </ListItem>
+                    </NavLink>
                 </List>
             </div>
         </Drawer>
