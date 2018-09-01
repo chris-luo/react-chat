@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+
 import { withStyles } from '@material-ui/core/styles';
 
 import Card from '@material-ui/core/Card';
@@ -11,12 +13,32 @@ import axios from 'axios';
 import Snackbar from '@material-ui/core/Snackbar';
 import { CardHeader } from '@material-ui/core';
 
+import jwt_decode from 'jwt-decode';
+
 class Auth extends Component {
     state = {
         email: '',
         password: '',
         error: false,
         errorMessage: null,
+        isAuthenticated: false
+    }
+
+    componentWillMount() {
+        this.checkToken();
+    }
+
+    checkToken = () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwt_decode(token);
+            const now = new Date().getTime() / 1000;
+            if (now < decodedToken.exp) {
+                this.setState({
+                    isAuthenticated: true
+                });
+            }
+        }
     }
 
     submitHandler = event => {
@@ -30,6 +52,11 @@ class Auth extends Component {
             .then(res => {
                 console.log(res);
                 localStorage.setItem('token', res.data.token);
+                this.setState({
+                    isAuthenticated: true,
+                    error: false,
+                    errorMessage: null
+                });
             })
             .catch(error => {
                 console.log(error.response);
@@ -55,8 +82,15 @@ class Auth extends Component {
 
     render() {
         const { classes } = this.props;
+
+        let redirect = null;
+        if (this.state.isAuthenticated) {
+            redirect = <Redirect to="" />
+        }
+
         return (
             <div>
+                {redirect}
                 <Card className={classes.card}>
                     <CardHeader title="Sign In" />
                     <CardContent>
