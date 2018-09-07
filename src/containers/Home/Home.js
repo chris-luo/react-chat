@@ -27,7 +27,8 @@ const transformDate = date => {
 class Home extends Component {
     state = {
         chats: null,
-        chat: null
+        chat: null,
+        socket: null
     }
 
     componentDidMount() {
@@ -51,6 +52,24 @@ class Home extends Component {
         const token = localStorage.getItem('token');
 
         console.log(chat);
+        if (!this.state.socket) {
+            const socket = this.getSocket();
+            socket.addEventListener('open', (event) => {
+                socket.send(JSON.stringify({
+                    type: 1,
+                    payload: chat.id + ""
+                }));
+            });
+            this.setState({
+                socket: socket
+            });
+        } else {
+            this.state.socket.send(JSON.stringify({
+                type: 1,
+                payload: chat.id + ""
+            }));
+        }
+
         axios.get(`http://localhost:3000/users/1/chats/${chat.id}/messages`, {
             headers: {
                 authorization: `Bearer ${token}`
@@ -68,6 +87,23 @@ class Home extends Component {
             .catch(error => {
                 console.log(error);
             });
+    }
+
+    getSocket = () => {
+        const socket = new WebSocket(`ws://localhost:3000/ws`);
+        socket.addEventListener('message', (event) => {
+            console.log(JSON.parse(event.data));
+        });
+        socket.addEventListener('error', (event) => {
+            console.log("error: ", event);
+        });
+        socket.addEventListener('close', (event) => {
+            console.log(event);
+            this.setState({
+                socket: null
+            });
+        });
+        return socket;
     }
 
     render() {
