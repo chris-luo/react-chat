@@ -8,6 +8,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Fingerprint from '@material-ui/icons/Fingerprint';
+import Chat from '@material-ui/icons/Chat';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -52,6 +53,15 @@ const drawer = (props) => {
                 </div>
                 <Divider />
                 <List>
+                    <NavLink to="" className={classes.Link}>
+                        <ListItem button onClick={props.toggleDrawer(false)}>
+                            <ListItemIcon>
+                                <Chat />
+                            </ListItemIcon>
+                            <ListItemText primary="Chats" />
+                        </ListItem>
+                    </NavLink>
+
                     <NavLink to="/auth" className={classes.Link}>
                         <ListItem button onClick={props.toggleDrawer(false)}>
                             <ListItemIcon>
