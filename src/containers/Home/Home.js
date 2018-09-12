@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+
 import axios from 'axios';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -28,7 +30,9 @@ class Home extends Component {
     state = {
         chats: null,
         chat: null,
-        socket: null
+        socket: null,
+        toChat: false,
+        selectedChat: null
     }
 
     componentDidMount() {
@@ -49,64 +53,17 @@ class Home extends Component {
     }
 
     onChat = chat => () => {
-        const token = localStorage.getItem('token');
-
+        this.setState({
+            toChat: true,
+            selectedChat: chat
+        });
         console.log(chat);
-        if (!this.state.socket) {
-            const socket = this.getSocket();
-            socket.addEventListener('open', (event) => {
-                socket.send(JSON.stringify({
-                    type: 1,
-                    payload: chat.id + ""
-                }));
-            });
-            this.setState({
-                socket: socket
-            });
-        } else {
-            this.state.socket.send(JSON.stringify({
-                type: 1,
-                payload: chat.id + ""
-            }));
-        }
-
-        axios.get(`http://localhost:3000/users/1/chats/${chat.id}/messages`, {
-            headers: {
-                authorization: `Bearer ${token}`
-            },
-            params: {
-                message_id: chat.messages[0].id
-            }
-        })
-            .then(res => {
-                console.log(res.data);
-                this.setState({
-                    chat: res.data
-                });
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-
-    getSocket = () => {
-        const socket = new WebSocket(`ws://localhost:3000/ws`);
-        socket.addEventListener('message', (event) => {
-            console.log(JSON.parse(event.data));
-        });
-        socket.addEventListener('error', (event) => {
-            console.log("error: ", event);
-        });
-        socket.addEventListener('close', (event) => {
-            console.log(event);
-            this.setState({
-                socket: null
-            });
-        });
-        return socket;
     }
 
     render() {
+        if (this.state.toChat) {
+            return <Redirect to={`/chats/${this.state.selectedChat.id}?msg=${this.state.selectedChat.messages[0].id}`} />
+        }
         let chats = null;
         if (this.state.chats) {
             chats = (
@@ -135,25 +92,10 @@ class Home extends Component {
             );
         }
 
-        let chat = null;
-        if (this.state.chat) {
-            chat = (
-                <List>
-                    {
-                        this.state.chat.map(message => (
-                            <ListItem key={message.id}>
-                                <ListItemText primary={message.body} />
-                            </ListItem>
-                        ))
-                    }
-                </List>
-            );
-        }
         return (
             <div>
                 <h1>Welcome Home</h1>
                 {chats}
-                {chat}
             </div>
 
         );
