@@ -54,10 +54,19 @@ class Chat extends Component {
             });
     }
 
+    componentWillUnmount() {
+        console.log("componentWillUnmount");
+    }
+
     getSocket = () => {
         const socket = new WebSocket(`ws://localhost:3000/ws`);
         socket.addEventListener('message', (event) => {
             console.log(JSON.parse(event.data));
+            this.setState((state, props) => {
+                return {
+                    chat: [...state.chat, JSON.parse(event.data)]
+                }
+            });
         });
         socket.addEventListener('error', (event) => {
             console.log("error: ", event);
@@ -80,10 +89,14 @@ class Chat extends Component {
 
     submitHandler = event => {
         event.preventDefault();
+        const { id } = this.props.match.params;
         console.log(this.state);
         this.state.socket.send(JSON.stringify({
             type: 2,
-            payload: this.state.message
+            payload: JSON.stringify({
+                room: id,
+                message: this.state.message
+            })
         }));
         this.setState({
             message: ''
