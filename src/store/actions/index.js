@@ -1,0 +1,1 @@
+export { setSocket } from './chats';

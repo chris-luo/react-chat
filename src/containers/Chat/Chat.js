@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
@@ -10,30 +13,24 @@ class Chat extends Component {
     state = {
         message: '',
         socket: null,
-        chat: null
+        chat: null,
+        redirect: false
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params;
-        const token = localStorage.getItem('token');
-
-        if (!this.state.socket) {
-            const socket = this.getSocket();
-            socket.addEventListener('open', (event) => {
-                socket.send(JSON.stringify({
-                    type: 1,
-                    payload: id + ""
-                }));
-            });
+        if (!this.props.socket) {
             this.setState({
-                socket: socket
+                redirect: true
             });
-        } else {
-            this.state.socket.send(JSON.stringify({
-                type: 1,
-                payload: id + ""
-            }));
+            return;
         }
+        const { id } = this.props.match.params;
+
+        this.props.socket.send(JSON.stringify({
+            type: 1,
+            payload: id + ""
+        }));
+        const token = localStorage.getItem('token');
 
         axios.get(`http://localhost:3000/users/1/chats/${id}/messages`, {
             headers: {
@@ -58,29 +55,6 @@ class Chat extends Component {
         console.log("componentWillUnmount");
     }
 
-    getSocket = () => {
-        const socket = new WebSocket(`ws://localhost:3000/ws`);
-        socket.addEventListener('message', (event) => {
-            console.log(JSON.parse(event.data));
-            this.setState((state, props) => {
-                return {
-                    chat: [...state.chat, JSON.parse(event.data)]
-                }
-            });
-        });
-        socket.addEventListener('error', (event) => {
-            console.log("error: ", event);
-        });
-        socket.addEventListener('close', (event) => {
-            console.log(event);
-            this.setState({
-                socket: null
-            });
-        });
-        return socket;
-    }
-
-
     handleChange = key => event => {
         this.setState({
             [key]: event.target.value,
@@ -91,7 +65,7 @@ class Chat extends Component {
         event.preventDefault();
         const { id } = this.props.match.params;
         console.log(this.state);
-        this.state.socket.send(JSON.stringify({
+        this.props.socket.send(JSON.stringify({
             type: 2,
             payload: JSON.stringify({
                 room: id,
@@ -111,6 +85,10 @@ class Chat extends Component {
     }
 
     render() {
+
+        if (this.state.redirect) {
+            return <Redirect to={''} />
+        }
 
         let chat = null;
         if (this.state.chat) {
@@ -148,4 +126,10 @@ class Chat extends Component {
     }
 }
 
-export default Chat;
+const mapStateToProps = state => {
+    return {
+        socket: state.chats.socket
+    }
+}
+
+export default connect(mapStateToProps)(Chat);

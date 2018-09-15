@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import axios from 'axios';
 import List from '@material-ui/core/List';
@@ -11,6 +12,8 @@ import Face from '@material-ui/icons/Face';
 import classes from './Home.css';
 import format from 'date-fns/format';
 import differenceInHours from 'date-fns/difference_in_hours';
+
+import * as actions from '../../store/actions';
 
 const transformDate = date => {
     const hours = differenceInHours(new Date(), date);
@@ -36,6 +39,10 @@ class Home extends Component {
     }
 
     componentDidMount() {
+        console.log(this.props.socket);
+        if (!this.props.socket) {
+            this.props.onSetSocket(this.getSocket());
+        }
         const token = localStorage.getItem('token');
         axios.get('http://localhost:3000/users/1/chats', {
             headers: {
@@ -52,7 +59,35 @@ class Home extends Component {
             });
     }
 
+    getSocket = () => {
+        const socket = new WebSocket(`ws://localhost:3000/ws`);
+        socket.addEventListener('message', (event) => {
+            console.log(JSON.parse(event.data));
+            // this.setState((state, props) => {
+            //     return {
+            //         chat: [...state.chat, JSON.parse(event.data)]
+            //     }
+            // });
+        });
+        socket.addEventListener('error', (event) => {
+            console.log("error: ", event);
+        });
+        socket.addEventListener('close', (event) => {
+            console.log(event);
+            // this.setState({
+            //     socket: null
+            // });
+        });
+        return socket;
+    }
+
     onChat = chat => () => {
+        console.log(this.props.socket);
+        // this.props.socket.send(JSON.stringify({
+        //     type: 1,
+        //     payload: chat.id + ""
+        // }));
+
         this.setState({
             toChat: true,
             selectedChat: chat
@@ -61,6 +96,7 @@ class Home extends Component {
     }
 
     render() {
+        console.log(this.props);
         if (this.state.toChat) {
             return <Redirect to={`/chats/${this.state.selectedChat.id}?msg=${this.state.selectedChat.messages[0].id}`} />
         }
@@ -102,4 +138,16 @@ class Home extends Component {
     }
 }
 
-export default Home;
+const mapStateToProps = state => {
+    return {
+        socket: state.chats.socket
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onSetSocket: socket => dispatch(actions.setSocket(socket))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
