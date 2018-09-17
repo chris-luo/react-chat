@@ -12,7 +12,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 class Chat extends Component {
     state = {
         message: '',
-        socket: null,
         chat: null,
         redirect: false
     }
@@ -64,7 +63,6 @@ class Chat extends Component {
     submitHandler = event => {
         event.preventDefault();
         const { id } = this.props.match.params;
-        console.log(this.state);
         this.props.socket.send(JSON.stringify({
             type: 2,
             payload: JSON.stringify({
@@ -78,7 +76,7 @@ class Chat extends Component {
     }
 
     onClickHandler = () => {
-        this.state.socket.send(JSON.stringify({
+        this.props.socket.send(JSON.stringify({
             type: 1,
             payload: 10 + ""
         }));
