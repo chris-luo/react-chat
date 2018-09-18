@@ -9,11 +9,14 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import * as actions from '../../store/actions';
+
 class Chat extends Component {
     state = {
         message: '',
         chat: null,
-        redirect: false
+        redirect: false,
+        id: null
     }
 
     componentDidMount() {
@@ -23,14 +26,15 @@ class Chat extends Component {
             });
             return;
         }
+
         const { id } = this.props.match.params;
+        this.props.onJoinRoom(id);
 
-        this.props.socket.send(JSON.stringify({
-            type: 1,
-            payload: id + ""
-        }));
+        this.setState({
+            id: id
+        });
+
         const token = localStorage.getItem('token');
-
         axios.get(`http://localhost:3000/users/1/chats/${id}/messages`, {
             headers: {
                 authorization: `Bearer ${token}`
@@ -52,6 +56,9 @@ class Chat extends Component {
 
     componentWillUnmount() {
         console.log("componentWillUnmount");
+        if (this.state.id) {
+            this.props.onLeaveRoom(this.state.id);
+        }
     }
 
     handleChange = key => event => {
@@ -62,24 +69,10 @@ class Chat extends Component {
 
     submitHandler = event => {
         event.preventDefault();
-        const { id } = this.props.match.params;
-        this.props.socket.send(JSON.stringify({
-            type: 2,
-            payload: JSON.stringify({
-                room: id,
-                message: this.state.message
-            })
-        }));
+        this.props.onSendMessage(this.state.id, this.state.message);
         this.setState({
             message: ''
         });
-    }
-
-    onClickHandler = () => {
-        this.props.socket.send(JSON.stringify({
-            type: 1,
-            payload: 10 + ""
-        }));
     }
 
     render() {
@@ -115,9 +108,6 @@ class Chat extends Component {
                         Send
                     </Button>
                 </form>
-                <Button type="button" color="primary" onClick={this.onClickHandler}>
-                    Change
-                    </Button>
             </div>
 
         );
@@ -130,4 +120,12 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(Chat);
+const mapDispatchToProps = dispatch => {
+    return {
+        onJoinRoom: room => dispatch(actions.joinRoom(room)),
+        onLeaveRoom: room => dispatch(actions.leaveRoom(room)),
+        onSendMessage: (room, message) => dispatch(actions.sendMessage(room, message))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

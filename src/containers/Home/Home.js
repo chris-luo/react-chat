@@ -32,14 +32,12 @@ const transformDate = date => {
 class Home extends Component {
     state = {
         chats: null,
-        chat: null,
         socket: null,
         toChat: false,
         selectedChat: null
     }
 
     componentDidMount() {
-        console.log(this.props.socket);
         if (!this.props.socket) {
             this.props.onSetSocket(this.getSocket());
         }
@@ -82,21 +80,13 @@ class Home extends Component {
     }
 
     onChat = chat => () => {
-        console.log(this.props.socket);
-        // this.props.socket.send(JSON.stringify({
-        //     type: 1,
-        //     payload: chat.id + ""
-        // }));
-
         this.setState({
             toChat: true,
             selectedChat: chat
         });
-        console.log(chat);
     }
 
     render() {
-        console.log(this.props);
         if (this.state.toChat) {
             return <Redirect to={`/chats/${this.state.selectedChat.id}?msg=${this.state.selectedChat.messages[0].id}`} />
         }
