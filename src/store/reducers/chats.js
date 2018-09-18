@@ -1,4 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
+import * as webSocket from '../../webSocket/webSocket';
 
 const initialState = {
     socket: null
@@ -9,7 +10,7 @@ const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.SEND_MESSAGE:
             state.socket.send(JSON.stringify({
-                type: 2,
+                type: webSocket.SEND_MESSAGE,
                 payload: JSON.stringify({
                     room: action.payload.id,
                     message: action.payload.message
@@ -25,7 +26,7 @@ const reducer = (state = initialState, action) => {
             };
         case actionTypes.JOIN_ROOM:
             state.socket.send(JSON.stringify({
-                type: 1,
+                type: webSocket.JOIN_ROOM,
                 payload: action.payload
             }));
             return {
@@ -33,7 +34,7 @@ const reducer = (state = initialState, action) => {
             }
         case actionTypes.LEAVE_ROOM:
             state.socket.send(JSON.stringify({
-                type: 0,
+                type: webSocket.LEAVE_ROOM,
                 payload: action.payload
             }));
             return {
