@@ -60,12 +60,10 @@ class Home extends Component {
     getSocket = () => {
         const socket = new WebSocket(`ws://localhost:3000/ws`);
         socket.addEventListener('message', (event) => {
-            console.log(JSON.parse(event.data));
-            // this.setState((state, props) => {
-            //     return {
-            //         chat: [...state.chat, JSON.parse(event.data)]
-            //     }
-            // });
+            const messages = event.data.split(/\n/);
+            for (const message of messages) {
+                console.log(JSON.parse(message));
+            }
         });
         socket.addEventListener('error', (event) => {
             console.log("error: ", event);
