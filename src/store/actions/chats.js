@@ -21,4 +21,9 @@ export const sendMessage = (id, message) => ({
         id: id,
         message: message
     }
-})
+});
+
+export const receiveMessage = (message) => ({
+    type: actionTypes.RECEIVE_MESSAGE,
+    payload: message
+});

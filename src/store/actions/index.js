@@ -1,1 +1,1 @@
-export { setSocket, joinRoom, leaveRoom, sendMessage } from './chats';
+export { setSocket, joinRoom, leaveRoom, sendMessage, receiveMessage } from './chats';

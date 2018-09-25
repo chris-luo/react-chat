@@ -19,6 +19,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state
             }
+        case actionTypes.RECEIVE_MESSAGE:
+            console.log(action.payload);
+            return {
+                ...state
+            }
         case actionTypes.SET_SOCKET:
             return {
                 ...state,

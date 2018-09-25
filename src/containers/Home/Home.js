@@ -62,7 +62,7 @@ class Home extends Component {
         socket.addEventListener('message', (event) => {
             const messages = event.data.split(/\n/);
             for (const message of messages) {
-                console.log(JSON.parse(message));
+                this.props.onReceiveMessage(JSON.parse(message));
             }
         });
         socket.addEventListener('error', (event) => {
@@ -134,7 +134,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSetSocket: socket => dispatch(actions.setSocket(socket))
+        onSetSocket: socket => dispatch(actions.setSocket(socket)),
+        onReceiveMessage: message => dispatch(actions.receiveMessage(message))
     }
 }
 
