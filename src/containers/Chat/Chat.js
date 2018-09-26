@@ -14,7 +14,6 @@ import * as actions from '../../store/actions';
 class Chat extends Component {
     state = {
         message: '',
-        chat: null,
         redirect: false,
         id: null
     }
@@ -45,9 +44,7 @@ class Chat extends Component {
         })
             .then(res => {
                 console.log(res.data);
-                this.setState({
-                    chat: res.data
-                });
+                this.props.onSetChat(id, res.data);
             })
             .catch(error => {
                 console.log(error);
@@ -76,17 +73,18 @@ class Chat extends Component {
     }
 
     render() {
-
         if (this.state.redirect) {
             return <Redirect to={''} />
         }
 
-        let chat = null;
-        if (this.state.chat) {
-            chat = (
+        let messages = null;
+
+        const chat = this.props.chats.find(chat => chat.id === this.state.id);
+        if (chat) {
+            messages = (
                 <List>
                     {
-                        this.state.chat.map(message => (
+                        chat.messages.map(message => (
                             <ListItem key={message.id}>
                                 <ListItemText primary={message.body} />
                             </ListItem>
@@ -97,7 +95,7 @@ class Chat extends Component {
         }
         return (
             <div>
-                {chat}
+                {messages}
                 <form onSubmit={this.submitHandler}>
                     <TextField
                         value={this.state.message}
@@ -116,7 +114,8 @@ class Chat extends Component {
 
 const mapStateToProps = state => {
     return {
-        socket: state.chats.socket
+        socket: state.chats.socket,
+        chats: state.chats.chats
     }
 }
 
@@ -124,7 +123,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onJoinRoom: room => dispatch(actions.joinRoom(room)),
         onLeaveRoom: room => dispatch(actions.leaveRoom(room)),
-        onSendMessage: (room, message) => dispatch(actions.sendMessage(room, message))
+        onSendMessage: (room, message) => dispatch(actions.sendMessage(room, message)),
+        onSetChat: (id, messages) => dispatch(actions.setChat(id, messages))
     }
 }
 

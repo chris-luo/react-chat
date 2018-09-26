@@ -27,3 +27,11 @@ export const receiveMessage = (message) => ({
     type: actionTypes.RECEIVE_MESSAGE,
     payload: message
 });
+
+export const setChat = (id, messages) => ({
+    type: actionTypes.SET_CHAT,
+    payload: {
+        id: id,
+        messages: messages
+    }
+});

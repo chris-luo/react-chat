@@ -2,7 +2,8 @@ import * as actionTypes from '../actions/actionTypes';
 import * as webSocket from '../../webSocket/webSocket';
 
 const initialState = {
-    socket: null
+    socket: null,
+    chats: []
 }
 
 const reducer = (state = initialState, action) => {
@@ -20,9 +21,18 @@ const reducer = (state = initialState, action) => {
                 ...state
             }
         case actionTypes.RECEIVE_MESSAGE:
-            console.log(action.payload);
+            const index = state.chats.findIndex(chat => chat.id === action.payload.id);
+            const chat = state.chats[index];
+            const updatedChat = {
+                ...chat,
+                messages: [...chat.messages, action.payload.message]
+            }
+            const oldChats = [...state.chats];
+            oldChats.splice(index, 1);
+            const chats = [updatedChat, ...oldChats]
             return {
-                ...state
+                ...state,
+                chats: chats
             }
         case actionTypes.SET_SOCKET:
             return {
@@ -44,6 +54,11 @@ const reducer = (state = initialState, action) => {
             }));
             return {
                 ...state
+            }
+        case actionTypes.SET_CHAT:
+            return {
+                ...state,
+                chats: [...state.chats, action.payload]
             }
         default:
             return state;
