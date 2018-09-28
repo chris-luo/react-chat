@@ -44,7 +44,7 @@ class Chat extends Component {
         })
             .then(res => {
                 console.log(res.data);
-                this.props.onSetChat(id, res.data);
+                this.props.onSetMessages(this.state.id, res.data);
             })
             .catch(error => {
                 console.log(error);
@@ -124,7 +124,7 @@ const mapDispatchToProps = dispatch => {
         onJoinRoom: room => dispatch(actions.joinRoom(room)),
         onLeaveRoom: room => dispatch(actions.leaveRoom(room)),
         onSendMessage: (room, message) => dispatch(actions.sendMessage(room, message)),
-        onSetChat: (id, messages) => dispatch(actions.setChat(id, messages))
+        onSetMessages: (id, messages) => dispatch(actions.setMessages(id, messages))
     }
 }
 

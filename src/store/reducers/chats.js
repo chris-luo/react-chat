@@ -55,11 +55,26 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state
             }
-        case actionTypes.SET_CHAT:
+        case actionTypes.SET_CHATS:
             return {
                 ...state,
-                chats: [...state.chats, action.payload]
+                chats: action.payload
             }
+        case actionTypes.SET_MESSAGES: {
+            const index = state.chats.findIndex(chat => chat.id === action.payload.id);
+            const chat = state.chats[index];
+            const updatedChat = {
+                ...chat,
+                messages: [...action.payload.messages, ...chat.messages]
+            }
+            const oldChats = [...state.chats];
+            oldChats.splice(index, 1);
+            const chats = [updatedChat, ...oldChats]
+            return {
+                ...state,
+                chats: chats
+            }
+        }
         default:
             return state;
     }

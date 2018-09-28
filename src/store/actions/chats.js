@@ -23,13 +23,18 @@ export const sendMessage = (id, message) => ({
     }
 });
 
-export const receiveMessage = (message) => ({
+export const receiveMessage = message => ({
     type: actionTypes.RECEIVE_MESSAGE,
     payload: message
 });
 
-export const setChat = (id, messages) => ({
-    type: actionTypes.SET_CHAT,
+export const setChats = chats => ({
+    type: actionTypes.SET_CHATS,
+    payload: chats
+});
+
+export const setMessages = (id, messages) => ({
+    type: actionTypes.SET_MESSAGES,
     payload: {
         id: id,
         messages: messages

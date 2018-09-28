@@ -31,8 +31,6 @@ const transformDate = date => {
 
 class Home extends Component {
     state = {
-        chats: null,
-        socket: null,
         toChat: false,
         selectedChat: null
     }
@@ -48,9 +46,8 @@ class Home extends Component {
             }
         })
             .then(res => {
-                this.setState({
-                    chats: res.data
-                });
+                console.log(res.data);
+                this.props.onSetChats(res.data);
             })
             .catch(error => {
                 console.log(error);
@@ -89,11 +86,11 @@ class Home extends Component {
             return <Redirect to={`/chats/${this.state.selectedChat.id}?msg=${this.state.selectedChat.messages[0].id}`} />
         }
         let chats = null;
-        if (this.state.chats) {
+        if (this.props.chats) {
             chats = (
                 <List>
                     {
-                        this.state.chats.map(chat => (
+                        this.props.chats.map(chat => (
                             <ListItem
                                 button
                                 key={chat.id}
@@ -128,14 +125,16 @@ class Home extends Component {
 
 const mapStateToProps = state => {
     return {
-        socket: state.chats.socket
+        socket: state.chats.socket,
+        chats: state.chats.chats
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         onSetSocket: socket => dispatch(actions.setSocket(socket)),
-        onReceiveMessage: message => dispatch(actions.receiveMessage(message))
+        onReceiveMessage: message => dispatch(actions.receiveMessage(message)),
+        onSetChats: chats => dispatch(actions.setChats(chats))
     }
 }
 
