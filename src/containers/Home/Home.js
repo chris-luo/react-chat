@@ -56,6 +56,13 @@ class Home extends Component {
 
     getSocket = () => {
         const socket = new WebSocket(`ws://localhost:3000/ws`);
+        socket.addEventListener('open', event => {
+            console.log(event);
+            socket.send(JSON.stringify({
+                type: 99,
+                payload: localStorage.getItem('token')
+            }));
+        });
         socket.addEventListener('message', (event) => {
             const messages = event.data.split(/\n/);
             for (const message of messages) {
