@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -9,19 +10,16 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import axios from 'axios';
 import Snackbar from '@material-ui/core/Snackbar';
 import { CardHeader } from '@material-ui/core';
 
 import jwt_decode from 'jwt-decode';
+import * as actions from '../../store/actions';
 
 class Auth extends Component {
     state = {
         email: '',
-        password: '',
-        error: false,
-        errorMessage: null,
-        isAuthenticated: false
+        password: ''
     }
 
     componentWillMount() {
@@ -43,28 +41,7 @@ class Auth extends Component {
 
     submitHandler = event => {
         event.preventDefault();
-        console.log(this.state);
-        const authData = {
-            email: this.state.email,
-            password: this.state.password
-        }
-        axios.post('http://localhost:3000/users/signin', authData)
-            .then(res => {
-                console.log(res);
-                localStorage.setItem('token', res.data.token);
-                this.setState({
-                    isAuthenticated: true,
-                    error: false,
-                    errorMessage: null
-                });
-            })
-            .catch(error => {
-                console.log(error.response);
-                this.setState({
-                    error: true,
-                    errorMessage: error.response.data
-                });
-            });
+        this.props.onAuth(this.state.email, this.state.password);
     }
 
     handleChange = name => event => {
@@ -73,18 +50,11 @@ class Auth extends Component {
         });
     };
 
-    handleClose = () => {
-        this.setState({
-            error: false,
-            errorMessage: null
-        });
-    }
-
     render() {
         const { classes } = this.props;
 
         let redirect = null;
-        if (this.state.isAuthenticated) {
+        if (this.props.isAuthenticated) {
             redirect = <Redirect to="" />
         }
 
@@ -117,13 +87,13 @@ class Auth extends Component {
 
                 <Snackbar
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    open={this.state.error}
-                    onClose={this.handleClose}
+                    open={this.props.error ? true : false}
+                    onClose={this.props.onAuthReset}
                     ContentProps={{
                         'aria-describedby': 'message-id',
                     }}
                     autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.errorMessage}</span>}
+                    message={<span id="message-id">{this.props.error}</span>}
                 />
             </div>
         )
@@ -143,4 +113,14 @@ const styles = theme => ({
     }
 });
 
-export default withStyles(styles)(Auth);
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.token !== null,
+    error: state.auth.error
+});
+
+const mapDispatchToProps = dispatch => ({
+    onAuth: (email, password) => dispatch(actions.auth(email, password)),
+    onAuthReset: () => dispatch(actions.authReset())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Auth));
