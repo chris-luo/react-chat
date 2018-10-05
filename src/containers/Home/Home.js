@@ -80,9 +80,7 @@ class Home extends Component {
         });
         socket.addEventListener('close', (event) => {
             console.log(event);
-            // this.setState({
-            //     socket: null
-            // });
+            this.props.onSetSocket(null);
         });
         return socket;
     }
