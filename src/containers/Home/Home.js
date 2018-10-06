@@ -115,7 +115,7 @@ class Home extends Component {
                                     primary={chat.users[1]}
                                     secondary={chat.messages[0].body} />
                                 <ListItemText
-                                    secondary={transformDate(chat.messages[0].send_time)}
+                                    secondary={transformDate(chat.messages[0].sendTime)}
                                     className={classes.time} />
                             </ListItem>
                         ))
