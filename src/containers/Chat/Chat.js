@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
@@ -77,6 +78,8 @@ class Chat extends Component {
             return <Redirect to={''} />
         }
 
+        const { classes } = this.props;
+
         let messages = null;
 
         const chat = this.props.chats.find(chat => chat.id === this.state.id);
@@ -85,7 +88,7 @@ class Chat extends Component {
                 <List>
                     {
                         chat.messages.map(message => (
-                            <ListItem key={message.id}>
+                            <ListItem className={this.props.user.id === message.senderID ? classes.messageRight : classes.messageLeft} key={message.id}>
                                 <ListItemText primary={message.body} />
                             </ListItem>
                         ))
@@ -112,10 +115,31 @@ class Chat extends Component {
     }
 }
 
+const styles = theme => ({
+    messageRight: {
+        width: '45%',
+        float: 'right',
+        backgroundColor: '#d3ffce',
+        clear: 'both',
+        wordWrap: 'break-word',
+        marginBottom: '12px',
+        borderRadius: '24px'
+    },
+    messageLeft: {
+        width: '45%',
+        backgroundColor: '#e6e6fa',
+        clear: 'both',
+        wordWrap: 'break-word',
+        marginBottom: '12px',
+        borderRadius: '24px'
+    }
+});
+
 const mapStateToProps = state => {
     return {
         socket: state.chats.socket,
-        chats: state.chats.chats
+        chats: state.chats.chats,
+        user: state.auth.user
     }
 }
 
@@ -128,4 +152,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Chat));
