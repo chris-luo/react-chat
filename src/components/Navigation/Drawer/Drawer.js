@@ -9,6 +9,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Fingerprint from '@material-ui/icons/Fingerprint';
 import Chat from '@material-ui/icons/Chat';
+import ExitToApp from '@material-ui/icons/ExitToApp';
 import PersonAdd from '@material-ui/icons/PersonAdd';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -41,6 +42,52 @@ const styles = theme => ({
 const drawer = (props) => {
     const { classes } = props;
 
+    let drawerLinks = (
+        <List>
+            <NavLink to="/auth" className={classes.Link}>
+                <ListItem button onClick={props.toggleDrawer(false)}>
+                    <ListItemIcon>
+                        <Fingerprint />
+                    </ListItemIcon>
+                    <ListItemText primary="Sign In" />
+                </ListItem>
+            </NavLink>
+
+            <NavLink to="/auth" className={classes.Link}>
+                <ListItem button onClick={props.toggleDrawer(false)}>
+                    <ListItemIcon>
+                        <PersonAdd />
+                    </ListItemIcon>
+                    <ListItemText primary="Sign Up" />
+                </ListItem>
+            </NavLink>
+        </List>
+    );
+
+    if (props.isAuthenticated) {
+        drawerLinks = (
+            <List>
+                <NavLink to="" className={classes.Link}>
+                    <ListItem button onClick={props.toggleDrawer(false)}>
+                        <ListItemIcon>
+                            <Chat />
+                        </ListItemIcon>
+                        <ListItemText primary="Chats" />
+                    </ListItem>
+                </NavLink>
+
+                <NavLink to="/auth" className={classes.Link}>
+                    <ListItem button onClick={props.signOutHandler}>
+                        <ListItemIcon>
+                            <ExitToApp />
+                        </ListItemIcon>
+                        <ListItemText primary="Sign Out" />
+                    </ListItem>
+                </NavLink>
+            </List>
+        );
+    };
+
     return (
         <Drawer open={props.open} onClose={props.toggleDrawer(false)}>
             <div className={classes.list}>
@@ -52,34 +99,7 @@ const drawer = (props) => {
                     </div>
                 </div>
                 <Divider />
-                <List>
-                    <NavLink to="" className={classes.Link}>
-                        <ListItem button onClick={props.toggleDrawer(false)}>
-                            <ListItemIcon>
-                                <Chat />
-                            </ListItemIcon>
-                            <ListItemText primary="Chats" />
-                        </ListItem>
-                    </NavLink>
-
-                    <NavLink to="/auth" className={classes.Link}>
-                        <ListItem button onClick={props.toggleDrawer(false)}>
-                            <ListItemIcon>
-                                <Fingerprint />
-                            </ListItemIcon>
-                            <ListItemText primary="Sign In" />
-                        </ListItem>
-                    </NavLink>
-
-                    <NavLink to="/auth" className={classes.Link}>
-                        <ListItem button onClick={props.toggleDrawer(false)}>
-                            <ListItemIcon>
-                                <PersonAdd />
-                            </ListItemIcon>
-                            <ListItemText primary="Sign Up" />
-                        </ListItem>
-                    </NavLink>
-                </List>
+                {drawerLinks}
             </div>
         </Drawer>
     );
