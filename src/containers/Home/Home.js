@@ -14,7 +14,6 @@ import format from 'date-fns/format';
 import differenceInHours from 'date-fns/difference_in_hours';
 
 import * as actions from '../../store/actions';
-import jwt_decode from 'jwt-decode';
 
 const transformDate = date => {
     const hours = differenceInHours(new Date(), date);
@@ -41,12 +40,8 @@ class Home extends Component {
             this.props.onSetSocket(this.getSocket());
         }
         const token = localStorage.getItem('token');
-        let decodedToken;
-        if (token) {
-            decodedToken = jwt_decode(token);
-        }
 
-        axios.get(`http://localhost:3000/users/${decodedToken.id}/chats`, {
+        axios.get(`http://localhost:3000/users/${this.props.user.id}/chats`, {
             headers: {
                 authorization: `Bearer ${token}`
             }
@@ -137,7 +132,8 @@ class Home extends Component {
 const mapStateToProps = state => {
     return {
         socket: state.chats.socket,
-        chats: state.chats.chats
+        chats: state.chats.chats,
+        user: state.auth.user
     };
 };
 

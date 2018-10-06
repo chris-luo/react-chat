@@ -35,7 +35,7 @@ class Chat extends Component {
         });
 
         const token = localStorage.getItem('token');
-        axios.get(`http://localhost:3000/users/1/chats/${id}/messages`, {
+        axios.get(`http://localhost:3000/users/${this.props.user.id}/chats/${id}/messages`, {
             headers: {
                 authorization: `Bearer ${token}`
             },

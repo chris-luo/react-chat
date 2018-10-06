@@ -13,7 +13,6 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import { CardHeader } from '@material-ui/core';
 
-import jwt_decode from 'jwt-decode';
 import * as actions from '../../store/actions';
 
 class Auth extends Component {
