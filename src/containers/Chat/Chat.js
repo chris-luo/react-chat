@@ -88,8 +88,20 @@ class Chat extends Component {
                 <List>
                     {
                         chat.messages.map(message => (
-                            <ListItem className={this.props.user.id === message.senderID ? classes.messageRight : classes.messageLeft} key={message.id}>
-                                <ListItemText primary={message.body} />
+                            <ListItem
+                                className={
+                                    this.props.user.id === message.senderID ?
+                                        classes.messageRight :
+                                        classes.messageLeft}
+                                key={message.id}>
+                                <ListItemText
+                                    classes={
+                                        this.props.user.id === message.senderID ?
+                                            {
+                                                primary: classes.messageTextRight
+                                            } :
+                                            null}
+                                    primary={message.body} />
                             </ListItem>
                         ))
                     }
@@ -119,7 +131,7 @@ const styles = theme => ({
     messageRight: {
         width: '45%',
         float: 'right',
-        backgroundColor: '#d3ffce',
+        backgroundColor: '#3399ff',
         clear: 'both',
         wordWrap: 'break-word',
         marginBottom: '12px',
@@ -127,11 +139,15 @@ const styles = theme => ({
     },
     messageLeft: {
         width: '45%',
-        backgroundColor: '#e6e6fa',
+        float: 'left',
+        backgroundColor: '#eeeeee',
         clear: 'both',
         wordWrap: 'break-word',
         marginBottom: '12px',
         borderRadius: '24px'
+    },
+    messageTextRight: {
+        color: '#ffffff'
     }
 });
 
