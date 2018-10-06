@@ -22,23 +22,6 @@ class Auth extends Component {
         password: ''
     }
 
-    componentWillMount() {
-        this.checkToken();
-    }
-
-    checkToken = () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = jwt_decode(token);
-            const now = new Date().getTime() / 1000;
-            if (now < decodedToken.exp) {
-                this.setState({
-                    isAuthenticated: true
-                });
-            }
-        }
-    }
-
     submitHandler = event => {
         event.preventDefault();
         this.props.onAuth(this.state.email, this.state.password);

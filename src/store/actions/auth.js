@@ -53,3 +53,20 @@ export const auth = (email, password) => {
             });
     }
 }
+
+export const authCheckState = () => {
+    return dispatch => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            dispatch(logout());
+        } else {
+            const decodedToken = jwt_decode(token);
+            const now = new Date().getTime() / 1000;
+            if (now < decodedToken.exp) {
+                dispatch(authSuccess(token, decodedToken));
+            } else {
+                dispatch(logout());
+            }
+        }
+    }
+}
